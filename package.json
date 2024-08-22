@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@next/swc-win32-x64-msvc": "^15.0.0-rc.0",
+    "axios": "^1.7.4",
     "drizzle-orm": "^0.33.0",
+    "express": "^4.19.2",
     "mysql2": "^3.11.0",
     "next": "14.2.5",
     "react": "^18",
