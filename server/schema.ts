@@ -13,16 +13,13 @@ export const admins = mysqlTable('Admins', {
 // 用户信息表
 export const users = mysqlTable('Users', {
   id: bigint('id', { mode: 'number' }).primaryKey().autoincrement(),
-  username: varchar('username', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull(),
-  password: varchar('password', { length: 255 }).notNull(),
+  userhash: varchar('userhash', { length: 255 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // 教师信息表
 export const teachers = mysqlTable('Teachers', {
     id: bigint('id', { mode: 'number' }).primaryKey().autoincrement(),
-    username: varchar('username', { length: 255 }).notNull(),
     email: varchar('email', { length: 255 }).notNull(),
     password: varchar('password', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -32,8 +29,9 @@ export const teachers = mysqlTable('Teachers', {
 export const nfts = mysqlTable('NFTs', {
   id: serial('id').primaryKey(),
   tokenId: int('token_id').notNull(),
+  hash: varchar('hash',{length: 255}).notNull(),
   ocid: varchar('ocid', { length: 255 }).notNull(),
-  userId: bigint('user_id}',{mode: "bigint"}).references(() => users.id).notNull(),
+  userId: bigint('user_id',{mode: "bigint"}).references(() => users.id).notNull(),
   teacherId: bigint('teacher_id',{mode: "bigint"}).references(() => teachers.id).notNull(),
   collectionId: bigint('collection_id',{mode: 'bigint'}).references(() => nftCollections.id).notNull(),
   mintedAt: timestamp('minted_at').defaultNow().notNull(),
@@ -43,7 +41,7 @@ export const nfts = mysqlTable('NFTs', {
 export const nftCollections = mysqlTable('NFTCollections', {
     id: bigint('id', { mode: 'number' }).primaryKey().autoincrement(),
     name: varchar('name', { length: 255 }).notNull(),
-    description: text('description').notNull(),
+    contractAddress: varchar('contractAddress',{length:255}).notNull(),
     teacherId: bigint('teacher_id',{mode:'bigint'}).notNull().references(() => teachers.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   });

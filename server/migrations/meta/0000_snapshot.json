@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "4540d950-f591-42cc-865e-ab41a114c1ef",
+  "id": "fec3ea62-222d-48ad-ba0d-80089c9477f1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Admins": {
@@ -73,9 +73,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "contractAddress": {
+          "name": "contractAddress",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -139,6 +139,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "hash": {
+          "name": "hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "ocid": {
           "name": "ocid",
           "type": "varchar(255)",
@@ -146,8 +153,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "user_id}": {
-          "name": "user_id}",
+        "user_id": {
+          "name": "user_id",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
@@ -178,12 +185,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "NFTs_user_id}_Users_id_fk": {
-          "name": "NFTs_user_id}_Users_id_fk",
+        "NFTs_user_id_Users_id_fk": {
+          "name": "NFTs_user_id_Users_id_fk",
           "tableFrom": "NFTs",
           "tableTo": "Users",
           "columnsFrom": [
-            "user_id}"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -238,13 +245,6 @@
           "notNull": true,
           "autoincrement": true
         },
-        "username": {
-          "name": "username",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "email": {
           "name": "email",
           "type": "varchar(255)",
@@ -290,22 +290,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "username": {
-          "name": "username",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "password": {
-          "name": "password",
+        "userhash": {
+          "name": "userhash",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
