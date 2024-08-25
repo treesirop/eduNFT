@@ -7,17 +7,16 @@ import { useParams } from 'next/navigation';
 const TeacherDashboard = () => {
   const router = useRouter();
   const { id } = useParams() as { id: string }; // 使用类型断言
-  const [collectionName, setCollectionName] = useState('');
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [collections, setCollections] = useState<{ id: number; name: string; description: string; imageUrl: string }[]>([]);
+  const [courseName, setCourseName] = useState('');
+  const [contractAddress, setContractAddress] = useState('');
+  const [collections, setCollections] = useState<{ id: number; name: string; is_approved: boolean; contractAddress: string; }[]>([]);
 
   // Fetch collections for the teacher with the given ID
   useEffect(() => {
     if (id) {
       fetchCollections(id);
     } else {
-      router.push('/teachers'); // Redirect to login page if teacher ID is not found
+      router.push('/teacher'); // Redirect to login page if teacher ID is not found
     }
   }, [id, router]);
 
@@ -25,7 +24,13 @@ const TeacherDashboard = () => {
     try {
       const response = await fetch(`/api/collections?teacherId=${teacherId}`);
       const data = await response.json();
-      setCollections(data);
+      if (Array.isArray(data)) {
+        console.log(data);
+        setCollections(data);
+      } else {
+        console.error('Data is not an array:', data);
+        setCollections([]); // Set an empty array if data is not an array
+      }
     } catch (error) {
       console.error('Error fetching collections:', error);
     }
@@ -38,13 +43,23 @@ const TeacherDashboard = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ teacherId: id, collectionName, description, imageUrl }),
+        body: JSON.stringify({ name: courseName, is_approved: false, contractAddress: contractAddress, teacher_id: id }),
       });
       const data = await response.json();
       console.log('Collection submission response:', data);
-      fetchCollections(id); // Refresh collections after submission
+
+      // 清空输入框
+      setCourseName('');
+      setContractAddress('');
+
+      // 提示申请已经提交
+      alert('Application submitted!');
+
+      // 刷新集合列表
+      fetchCollections(id);
     } catch (error) {
       console.error('Error submitting collection:', error);
+      alert('Failed to submit application. Please try again.');
     }
   };
 
@@ -52,26 +67,13 @@ const TeacherDashboard = () => {
     <div className="max-w-4xl mx-auto p-6 space-y-12">
       {/* NFT Collection Creation Section */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold mb-4">Create NFT Collection</h1>
+        <h1 className="text-2xl font-semibold mb-4">Apply Course</h1>
         <input
           className="w-full mb-4 p-2 border rounded"
           type="text"
           placeholder="Collection Name"
-          value={collectionName}
-          onChange={(e) => setCollectionName(e.target.value)}
-        />
-        <textarea
-          className="w-full mb-4 p-2 border rounded"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          className="w-full mb-4 p-2 border rounded"
-          type="text"
-          placeholder="Image URL"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
+          value={courseName}
+          onChange={(e) => setCourseName(e.target.value)}
         />
         <button
           className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600"
@@ -82,18 +84,31 @@ const TeacherDashboard = () => {
       </div>
 
       {/* View Created NFT Collections Section */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold mb-4">My NFT Collections</h1>
-        <div className="space-y-4">
-          {collections.map((collection) => (
-            <div key={collection.id} className="border p-4 rounded-lg">
-              <h2 className="text-xl font-semibold">{collection.name}</h2>
-              <p className="text-gray-700">{collection.description}</p>
-              <img src={collection.imageUrl} alt={collection.name} className="w-32 mt-2" />
-            </div>
+      <table className="min-w-full bg-white border border-gray-300">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 border-b text-left">Collection Name</th>
+            <th className="py-2 px-4 border-b text-left">Contract Address</th>
+            <th className="py-2 px-4 border-b text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {collections.map((collection, index) => (
+            <tr key={index}>
+              <td className="py-2 px-4 border-b text-left">{collection.name}</td>
+              <td className="py-2 px-4 border-b text-left">{collection.contractAddress}</td>
+              <td className="py-2 px-4 border-b text-left">
+                <button 
+                  className={`px-4 py-2 rounded ${collection.is_approved ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+                  disabled={!collection.is_approved}
+                >
+                  {collection.is_approved ? 'Approved' : 'Not Approved'}
+                </button>
+              </td>
+            </tr>
           ))}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 };

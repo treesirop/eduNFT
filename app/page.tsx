@@ -1,6 +1,21 @@
+"use client"
 import Link from 'next/link';
-
+import { useEffect, useState } from 'react';
 export default function Home() {
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!initialized) {
+      // Call the init API route to initialize the database
+      fetch('/api/init')
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data.message);
+          setInitialized(true); // Mark as initialized
+        });
+    }
+  }, [initialized]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <h1 className="text-6xl font-bold mb-10">Navigation Page</h1>

@@ -6,8 +6,8 @@ export default async function handler(req:NextApiRequest, res: NextApiResponse) 
     try {
       switch (req.method) {
         case 'POST':
-          const { username, email, password } = req.body;
-          const createUserResult = await userController.createUser(username, email, password);
+          const { userhash} = req.body;
+          const createUserResult = await userController.createUser(userhash);
           res.status(201).json(createUserResult);
           break;
         

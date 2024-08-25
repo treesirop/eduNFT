@@ -9,12 +9,10 @@ async function getDbConnection() {
 }
 
 // 创建用户
-async function createUser(username: string, email: string, password: string) {
+async function createUser(userhash: string) {
   const db = await getDbConnection();
   const result = await db.insert(users).values({
-    username,
-    email,
-    password,
+    userhash,
     createdAt: new Date(), // 或者使用你的默认值函数
   }).execute();
   return result;

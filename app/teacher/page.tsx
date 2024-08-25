@@ -39,13 +39,10 @@ const TeacherDashboard = () => {
       });
       const data = await response.json();
       console.log('Login response:', data);
-      if (data.id) {
-        const teacherId = localStorage.getItem('teacherId'); // Retrieve teacher ID from local storage
-        if (teacherId) {
-          router.push(`/teachers/${teacherId}`); // Redirect to the teacher's dashboard with the ID in the path
-        } else {
-          console.error('Teacher ID not found in local storage');
-        }
+      if (data[0].id) {
+        let id = data[0].id;
+        localStorage.setItem('teacherId', data[0].id); // Store teacher ID in local storage
+        router.push(`/teacher/${data[0].id}`); // Redirect to the teacher's dashboard with the ID in the path
       } else {
         console.error('Login failed: ID not returned');
       }
@@ -61,7 +58,7 @@ const TeacherDashboard = () => {
         <input
           className="w-full mb-4 p-2 border rounded"
           type="email"
-          placeholder="Email"
+          placeholder="example@123.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />

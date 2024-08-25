@@ -1,4 +1,4 @@
-import { teachers } from '../schema';
+import { admins, teachers } from '../schema';
 import { connectToDatabase } from ".."; // 确保路径正确
 import { eq } from 'drizzle-orm';
 
@@ -9,10 +9,9 @@ async function getDbConnection() {
 }
 
 // 创建教师
-async function createTeacher(username: string, email: string, password: string) {
+async function createTeacher(email: string, password: string) {
   const db = await getDbConnection();
   const result = await db.insert(teachers).values({
-    username,
     email,
     password,
     createdAt: new Date(), // 或者使用你的默认值函数
@@ -32,6 +31,17 @@ async function getAllTeachers() {
   }
 }
 
+// 根据ID获取教师
+async function getId(email: string) {
+  const db = await getDbConnection();
+  try {
+    const result = await db.select().from(teachers).where(eq(teachers.email, email)).limit(1);
+    return result || null; // 返回第一个匹配的结果或 null
+  } catch (error) {
+    console.error('Error fetching teacher by email:', error);
+    throw new Error('Unable to fetch teacher');
+  }
+}
 // 根据ID获取教师
 async function getTeacherById(id: number) {
   const db = await getDbConnection();
@@ -84,4 +94,5 @@ export const teacherController = {
   getTeacherById,
   updateTeacher,
   deleteTeacher,
+  getId
 };

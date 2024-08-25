@@ -8,11 +8,12 @@ async function getDbConnection() {
   return db;
 }
 
-async function createNFT(ocid: string, tokenId: number, userId: number, teacherId: number, collectionId: number) {
+async function createNFT(hash: string,ocid: string, tokenId: number, userId: number, teacherId: number, collectionId: number) {
   const db = await getDbConnection();
   const result = await db.insert(nfts).values({
+    tokenId,
+    hash,
     ocid,
-    tokenId, // 确保列名称正确
     userId: BigInt(userId), // 将 userId 转换为 bigint 类型
     teacherId: BigInt(teacherId), // 将 teacherId 转换为 bigint 类型
     collectionId: BigInt(collectionId), // 将 collectionId 转换为 bigint 类型

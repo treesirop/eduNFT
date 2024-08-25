@@ -9,12 +9,13 @@ async function getDbConnection() {
 }
 
 // 创建NFT合集
-async function createNFTCollection(name: string, description: string, teacherId: number) {
-  const db = await getDbConnection();
+async function createNFTCollection(name: string, is_approved: boolean,contractAddress: string, teacher_id: number) {
+  const db = await getDbConnection(); 
   const result = await db.insert(nftCollections).values({
     name,
-    description,
-    teacherId: BigInt(teacherId),
+    is_approved,
+    contractAddress,
+    teacherId: BigInt(teacher_id),
     createdAt: new Date(), // 或者使用你的默认值函数
   }).execute();
   return result;
@@ -33,13 +34,11 @@ async function getAllNFTCollections() {
 }
 
 // 根据ID获取NFT合集
-async function getNFTCollectionById(id: number) {
+async function getNFTCollectionByTeacherId(teacher_id: bigint) {
   const db = await getDbConnection();
   try {
-    const result = await db.query.nftCollections.findMany({
-      where: eq(nftCollections.id, id),
-    });
-    return result[0] || null; // 返回第一个匹配的结果或 null
+    const result = await db.select().from(nftCollections).where(eq(nftCollections.teacherId, teacher_id));
+    return result || null; // 返回第一个匹配的结果或 null  
   } catch (error) {
     console.error('Error fetching NFT Collection by ID:', error);
     throw new Error('Unable to fetch NFT Collection');
@@ -81,7 +80,7 @@ async function deleteNFTCollection(id: number) {
 export const nftCollectionController = {
   createNFTCollection,
   getAllNFTCollections,
-  getNFTCollectionById,
+  getNFTCollectionByTeacherId,
   updateNFTCollection,
   deleteNFTCollection,
 };

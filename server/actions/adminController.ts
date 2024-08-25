@@ -9,7 +9,6 @@ async function createAdmin(username: any, password: any, email: any) {
   const result = await db.insert(admins).values({
     username,
     password,
-    email,
     createdAt: new Date(), // 或者使用你的默认值函数
   }).execute();
   return result;
