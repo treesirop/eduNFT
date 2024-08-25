@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "3893a2fc-72ee-4b6f-9eaf-15088311470a",
+  "id": "0b99c8de-bc96-4b5b-88e9-e44e5a4e9ec1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Admins": {
@@ -343,7 +343,14 @@
           ]
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "Users_userhash_unique": {
+          "name": "Users_userhash_unique",
+          "columns": [
+            "userhash"
+          ]
+        }
+      }
     }
   },
   "_meta": {

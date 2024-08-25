@@ -42,7 +42,8 @@ CREATE TABLE `Users` (
 	`id` bigint AUTO_INCREMENT NOT NULL,
 	`userhash` varchar(255) NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
-	CONSTRAINT `Users_id` PRIMARY KEY(`id`)
+	CONSTRAINT `Users_id` PRIMARY KEY(`id`),
+	CONSTRAINT `Users_userhash_unique` UNIQUE(`userhash`)
 );
 --> statement-breakpoint
 ALTER TABLE `NFTCollections` ADD CONSTRAINT `NFTCollections_user_id_Users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint

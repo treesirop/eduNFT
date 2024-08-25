@@ -11,7 +11,7 @@ type DBSchema = {
 };
 
 export async function connectToDatabase(): Promise<{ db: MySql2Database<DBSchema>; connection: mysql.Connection }> {
-  const connection = await mysql.createConnection({
+  const connection = await mysql.createPool({
     host: "localhost",
     user: "root",
     database: "api",

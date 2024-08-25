@@ -12,7 +12,7 @@ export const admins = mysqlTable('Admins', {
 // 用户信息表
 export const users = mysqlTable('Users', {
   id: bigint('id', { mode: 'number' }).primaryKey().autoincrement(),
-  userhash: varchar('userhash', { length: 255 }).notNull(),
+  userhash: varchar('userhash', { length: 255 }).notNull().unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

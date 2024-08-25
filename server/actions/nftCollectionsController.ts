@@ -45,8 +45,24 @@ async function getNFTCollectionByTeacherId(teacher_id: bigint) {
   }
 }
 
+// 根据ID获取NFT合集
+async function getNFTCollectionByContractAddress(hash: string) {
+  const db = await getDbConnection();
+  try {
+    const result = await db.select().from(nftCollections).where(eq(nftCollections.contractAddress, hash)).limit(1);
+    return result[0] || null; // 返回第一个匹配的结果或 null  
+  } catch (error) {
+    console.error('Error fetching NFT Collection by contractAddress:', error);
+    throw new Error('Unable to fetch NFT Collection');
+  }
+}
+
 // 更新NFT合集信息
 async function updateNFTCollection(id: number, updates: Partial<typeof nftCollections.$inferInsert>) {
+  if (!id) {
+    throw new Error('Invalid parameters: id is missing');
+  }
+
   const db = await getDbConnection();
   try {
     const result = await db
@@ -83,4 +99,5 @@ export const nftCollectionController = {
   getNFTCollectionByTeacherId,
   updateNFTCollection,
   deleteNFTCollection,
+  getNFTCollectionByContractAddress
 };

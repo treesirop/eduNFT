@@ -30,6 +30,31 @@ async function getAllUsers() {
   }
 }
 
+async function getUserIdByAddress(hash: string){
+  const db = await getDbConnection();
+  try {
+    // 使用 Drizzle ORM 的查询构造方法
+    const result = await db.select().from(users).where(eq(users.userhash, hash)).limit(1);
+    return result[0] || null; // 返回第一个匹配的结果或 null
+  } catch (error) {
+    console.error('Error fetching user by Hash:', error);
+    throw new Error('Unable to fetch user');
+  }
+}
+
+async function isExist(hash: string): Promise<boolean> {
+  const db = await getDbConnection();
+  try {
+    // 使用 Drizzle ORM 的查询构造方法
+    const result = await db.select().from(users).where(eq(users.userhash, hash));
+    
+    // 如果结果数组中有元素，说明 hash 存在
+    return result.length > 0;
+  } catch (error) {
+    console.error('Error fetching user by Hash:', error);
+    throw new Error('Unable to fetch user');
+  }
+}
 // 根据ID获取用户
 async function getUserById(id: number) {
   const db = await getDbConnection();
@@ -104,5 +129,7 @@ export const userController = {
   getUserById,
   updateUser,
   deleteUser,
-  getUserNfts
+  getUserNfts,
+  getUserIdByAddress,
+  isExist
 };

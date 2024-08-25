@@ -7,6 +7,9 @@ export default async function handler(req:NextApiRequest, res: NextApiResponse) 
       switch (req.method) {
         case 'POST':
           const { userhash} = req.body;
+          if (await userController.isExist(userhash)){
+            res.status(400).json("userhash already exists");
+          }
           const createUserResult = await userController.createUser(userhash);
           res.status(201).json(createUserResult);
           break;

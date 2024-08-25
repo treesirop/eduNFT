@@ -15,6 +15,8 @@ const TeacherDashboard = () => {
   useEffect(() => {
     if (id) {
       fetchCollections(id);
+      const intervalId = setInterval(() => fetchCollections(id), 15000000); // Poll every 5 seconds
+      return () => clearInterval(intervalId); // Cleanup on unmount
     } else {
       router.push('/teacher'); // Redirect to login page if teacher ID is not found
     }

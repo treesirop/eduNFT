@@ -1,25 +1,39 @@
 "use client";
+
 import LoginButton from '../components/LoginButton';
 import { useOCAuth } from '@opencampus/ocid-connect-js';
 import { ConnectBtn } from "../components/connectButton";
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useDeployContract } from 'wagmi'
+import { parseEther } from 'viem'
+import { abi, bytecode } from "../../lib/CourseCertificate.json"
+import { useAccount } from 'wagmi';
 
 export default function Home() {
   const { authState, ocAuth } = useOCAuth();
   const [collections, setCollections] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const { deployContract } = useDeployContract()
+  const { address, chain } = useAccount();
 
   useEffect(() => {
     console.log(authState);
     // Fetch courses data from the API
     fetchCourse();
+    const intervalId = setInterval(fetchCourse, 15000000); // Poll every 5 seconds
+    return () => clearInterval(intervalId); // Cleanup on unmount
   }, [authState]); // Now it will log whenever authState changes
+
+  useEffect(() => {
+    if (address) {
+      postUserAddress(address);
+    }
+  }, [address]);
 
   if (authState.error) {
     return <div>Error: {authState.error.message}</div>;
   }
-
+  
   const fetchCourse = async () => {
     try {
       // 获取nftcollections的信息，显示申请表
@@ -50,6 +64,55 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
+  const handleDeploy = async () => {
+    try {
+      const contract = await deployContract({
+        abi,
+        args: ["api"],
+        bytecode,
+      },
+      {
+        onSuccess: (data) => {
+          console.log('Contract deployed successfully:', data)
+          if (data) {
+            alert("Contract deployed successfully");
+          }
+        },
+        onError: (error) => {
+          console.error('Error deploying contract:', error)
+          alert("Error deploying contract");
+        },
+      });
+  
+      console.log("=======================");
+      
+      console.log('Contract deployed to:', contract);
+    } catch (error) {
+      console.error('Error deploying contract:', error);
+    }
+  };
+
+  const postUserAddress = async (address) => {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userhash: address }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert('User address posted successfully:', data);
+      } else {
+        alert('Failed to post user address:', response.statusText);
+      }
+    } catch (error) {
+      console.log('Error posting user address:', error);
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="border-b z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -79,21 +142,19 @@ export default function Home() {
           </thead>
           <tbody>
             {collections.map((course, index) => (
-              !course.is_approved && (
-                <tr key={index}>
-                  <td className="py-2 px-4 border-b text-center">{course.name}</td>
-                  <td className="py-2 px-4 border-b text-center">{course.contractAddress}</td>
-                  <td className="py-2 px-4 border-b text-center">
-                    <button 
-                      className={`px-4 py-2 rounded ${course.user_id ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-                      disabled={!course.user_id}
-                      onClick={() => handleMintClick(course)}
-                    >
-                      Mint
-                    </button>
-                  </td>
-                </tr>
-              )
+              <tr key={index}>
+                <td className="py-2 px-4 border-b text-center">{course.name}</td>
+                <td className="py-2 px-4 border-b text-center">{course.contractAddress}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button 
+                    className={`px-4 py-2 rounded ${course.user_id ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                    disabled={!course.user_id}
+                    onClick={() => handleMintClick(course)}
+                  >
+                    Mint
+                  </button>
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>
