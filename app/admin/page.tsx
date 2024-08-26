@@ -84,7 +84,7 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (isLoggedIn) {
       fetchApply();
-      const intervalId = setInterval(fetchApply, 15000000); // Poll every 5 seconds
+      const intervalId = setInterval(fetchApply, 1500000); // Poll every 5 seconds
       return () => clearInterval(intervalId); // Cleanup on unmount
     }
   }, [isLoggedIn]);
