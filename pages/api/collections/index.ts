@@ -21,16 +21,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               const serializedUsers = allUsers.map(user => {
                 return {
                   ...user,
-                  teacherId: user.teacherId.toString()
+                  teacherId: user.teacherId.toString(),
+                  user_id: user.user_id ? user.user_id.toString() : user.user_id
                 };
               });
               res.status(200).json(serializedUsers);
             } else {
               const allCollections = await nftCollectionController.getAllNFTCollections();
-              const serializedCollections = allCollections.map(collection => {
+              const serializedCollections = allCollections.map(user => {
                 return {
-                  ...collection,
-                  teacherId: collection.teacherId.toString()
+                  ...user,
+                  teacherId: user.teacherId.toString(),
+                  user_id: user.user_id ? user.user_id.toString() : user.user_id
                 };
               });
               res.status(200).json(serializedCollections);

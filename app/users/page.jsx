@@ -1,21 +1,25 @@
 "use client";
 
 import LoginButton from '../components/LoginButton';
+import { useWatchContractEvent ,useWaitForTransactionReceipt} from 'wagmi'
 import { useOCAuth } from '@opencampus/ocid-connect-js';
 import { ConnectBtn } from "../components/connectButton";
 import { useEffect, useState } from 'react';
-import { useDeployContract } from 'wagmi'
+import { useWriteContract} from 'wagmi'
 import { parseEther } from 'viem'
 import { abi, bytecode } from "../../lib/CourseCertificate.json"
 import { useAccount } from 'wagmi';
-
+import { useWalletClient } from 'wagmi'
 export default function Home() {
   const { authState, ocAuth } = useOCAuth();
   const [collections, setCollections] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const { deployContract } = useDeployContract()
+  const { writeContract } = useWriteContract()
+  const [contractAddress,setContractAddress] = useState();
   const { address, chain } = useAccount();
+  const result = useWalletClient()
 
+  
   useEffect(() => {
     console.log(authState);
     // Fetch courses data from the API
@@ -51,46 +55,51 @@ export default function Home() {
     }
   };
 
-  const handleMintClick = (course) => {
-    if (course.canMint) {
-      setSelectedCourse(course);
-      console.log('Selected Course:', course);
-      console.log('OCID edu_username:', ocAuth.getAuthInfo().edu_username);
-    }
-  };
+  const unwatch = useWatchContractEvent ({
+    address: contractAddress,
+    abi,
+    eventName: 'CertificateMinted',
+    onLogs(logs) {
+      console.log('Logs changed!', logs);
+    },
+  });
 
+  const handleMintClick = (course) => {
+    setSelectedCourse(course);
+    console.log('Selected Course:', course);
+    const ocid = ocAuth.getAuthInfo().edu_username;
+    setContractAddress(course.contractAddress);
+    writeContract({
+      abi,
+      address: course.contractAddress,
+      functionName: 'mintCertificate',
+      args: [
+        ocid
+      ],
+    },
+    {
+      async onSuccess(data) {
+        alert("successful");
+        // 捕获NFT铸造成功的event
+        console.log(data);
+
+        try {
+          // 将NFT信息存进数据库
+          // 将对应的user_id重置为0
+        } catch (error) {
+          console.error('Error watching contract event:', error);
+          alert('Error watching contract event: ' + error.message);
+        }
+      },
+      async onError(error) {
+        alert(error);
+      }
+    });
+  };
   // Add a loading state
   if (authState.isLoading) {
     return <div>Loading...</div>;
   }
-
-  const handleDeploy = async () => {
-    try {
-      const contract = await deployContract({
-        abi,
-        args: ["api"],
-        bytecode,
-      },
-      {
-        onSuccess: (data) => {
-          console.log('Contract deployed successfully:', data)
-          if (data) {
-            alert("Contract deployed successfully");
-          }
-        },
-        onError: (error) => {
-          console.error('Error deploying contract:', error)
-          alert("Error deploying contract");
-        },
-      });
-  
-      console.log("=======================");
-      
-      console.log('Contract deployed to:', contract);
-    } catch (error) {
-      console.error('Error deploying contract:', error);
-    }
-  };
 
   const postUserAddress = async (address) => {
     try {
@@ -104,9 +113,9 @@ export default function Home() {
 
       if (response.ok) {
         const data = await response.json();
-        alert('User address posted successfully:', data);
+        ('User address posted successfully:', data);
       } else {
-        alert('Failed to post user address:', response.statusText);
+        console.log('Failed to post user address:', response.statusText);
       }
     } catch (error) {
       console.log('Error posting user address:', error);
