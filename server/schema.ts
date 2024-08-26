@@ -29,10 +29,7 @@ export const nfts = mysqlTable('NFTs', {
   id: serial('id').primaryKey(),
   tokenId: int('token_id').notNull(),
   hash: varchar('hash',{length: 255}).notNull(),
-  ocid: varchar('ocid', { length: 255 }).notNull(),
   userId: bigint('user_id',{mode: "bigint"}).references(() => users.id).notNull(),
-  teacherId: bigint('teacher_id',{mode: "bigint"}).references(() => teachers.id).notNull(),
-  collectionId: bigint('collection_id',{mode: 'bigint'}).references(() => nftCollections.id).notNull(),
   mintedAt: timestamp('minted_at').defaultNow().notNull(),
 });
 
@@ -61,14 +58,6 @@ export const nftsRelations = relations(nfts, ({ one }) => ({
   user: one(users, {
     fields: [nfts.userId],
     references: [users.id],
-  }),
-  teacher: one(teachers, {
-    fields: [nfts.teacherId],
-    references: [teachers.id],
-  }),
-  collection: one(nftCollections, {
-    fields: [nfts.collectionId],
-    references: [nftCollections.id],
   }),
 }));
 

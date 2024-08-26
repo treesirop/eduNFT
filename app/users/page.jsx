@@ -17,21 +17,24 @@ export default function Home() {
   const { writeContract } = useWriteContract()
   const [contractAddress,setContractAddress] = useState();
   const { address, chain } = useAccount();
-  const result = useWalletClient()
-
+  const [logEnv,setLogEnv] = useState([]);
+  
   useWatchContractEvent({
     address: contractAddress,
     abi,
     eventName: 'CertificateMinted',
     onLogs(logs,prevLogs) {
-      console.log('New logs!', logs);
-      console.log('pre logs!', prevLogs)
+      if(logs){
+        setLogEnv(logs);
+      }
     },
     onError(error) {
       console.error('Error watching contract event:', error);
     }
   });
+  
   useEffect(() => {
+   
     console.log(authState);
     // Fetch courses data from the API
     fetchCourse();
