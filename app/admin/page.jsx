@@ -5,7 +5,7 @@ import React, { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { abi, bytecode } from "../../lib/CourseCertificate.json";
 import { ConnectBtn } from '../components/connectButton';
-import { useWaitForTransactionReceipt } from 'wagmi'
+import { useWaitForTransactionReceipt ,useWatchContractEvent} from 'wagmi'
 
 const AdminDashboard = () => {
   const { writeContract } = useWriteContract();
@@ -19,9 +19,12 @@ const AdminDashboard = () => {
   const [inputValues, setInputValues] = useState({});
   const [courseAddress, setCourseAddress] = useState('');
   const [userAddress, setUserAddress] = useState('');
-  const result = useWaitForTransactionReceipt({
-    hash: courseAddress,
-  });
+  const [hashData, setHashData] = useState('');
+
+  // const result = useWaitForTransactionReceipt({
+  //   hash: hashData,
+  //   pollingInterval: 1000
+  // });
   const handleLogin = async () => {
     try {
       const response = await fetch('/api/admin/', {
@@ -64,6 +67,8 @@ const AdminDashboard = () => {
     }
   };
 
+  
+
   // Check login status on component mount
   useEffect(() => {
     const storedAdminId = localStorage.getItem('adminId');
@@ -73,7 +78,21 @@ const AdminDashboard = () => {
       setAdminId(Number(storedAdminId));
       setIsLoggedIn(true);
     }
+    
   }, []);
+
+  useWatchContractEvent({
+      address: "0x4c6F990402B63f04Cd6c3A226538c1ACAd7ABc8C",
+      abi,
+      eventName: 'CertificateIssued',
+      onLogs(logs,prevLogs) {
+        console.log('New logs!', logs);
+        console.log('pre logs!', prevLogs)
+      },
+      onError(error) {
+        console.error('Error watching contract event:', error);
+      }
+  });
 
   // Fetch collections 
   useEffect(() => {
@@ -197,12 +216,8 @@ const AdminDashboard = () => {
       ],
     },
       {
-        async onSuccess() {
+        async onSuccess(data) {
           alert("successful");
-          console.log("-----------------------",result.data);
-
-          if(result.data){
-          
           try {
             const response = await fetch('/api/collections/update', {
               method: 'PUT',
@@ -223,7 +238,7 @@ const AdminDashboard = () => {
             console.error('Error saving data:', error);
             alert('Error saving data: ' + error.message);
           }
-        }
+        
         },
         async onError(error) {
           alert(error);

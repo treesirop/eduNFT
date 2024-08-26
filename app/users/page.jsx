@@ -1,7 +1,7 @@
 "use client";
 
 import LoginButton from '../components/LoginButton';
-import { useWatchContractEvent ,useWaitForTransactionReceipt} from 'wagmi'
+import { useWatchContractEvent} from 'wagmi'
 import { useOCAuth } from '@opencampus/ocid-connect-js';
 import { ConnectBtn } from "../components/connectButton";
 import { useEffect, useState } from 'react';
@@ -19,7 +19,18 @@ export default function Home() {
   const { address, chain } = useAccount();
   const result = useWalletClient()
 
-  
+  useWatchContractEvent({
+    address: contractAddress,
+    abi,
+    eventName: 'CertificateMinted',
+    onLogs(logs,prevLogs) {
+      console.log('New logs!', logs);
+      console.log('pre logs!', prevLogs)
+    },
+    onError(error) {
+      console.error('Error watching contract event:', error);
+    }
+  });
   useEffect(() => {
     console.log(authState);
     // Fetch courses data from the API
@@ -55,15 +66,6 @@ export default function Home() {
     }
   };
 
-  const unwatch = useWatchContractEvent ({
-    address: contractAddress,
-    abi,
-    eventName: 'CertificateMinted',
-    onLogs(logs) {
-      console.log('Logs changed!', logs);
-    },
-  });
-
   const handleMintClick = (course) => {
     setSelectedCourse(course);
     console.log('Selected Course:', course);
@@ -80,16 +82,9 @@ export default function Home() {
     {
       async onSuccess(data) {
         alert("successful");
-        // 捕获NFT铸造成功的event
         console.log(data);
+        // 将hash存在NFTs表中
 
-        try {
-          // 将NFT信息存进数据库
-          // 将对应的user_id重置为0
-        } catch (error) {
-          console.error('Error watching contract event:', error);
-          alert('Error watching contract event: ' + error.message);
-        }
       },
       async onError(error) {
         alert(error);
