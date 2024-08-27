@@ -4,7 +4,7 @@ import { http, createStorage, cookieStorage } from 'wagmi'
 import { sepolia, bscTestnet, blastSepolia } from 'wagmi/chains'
 import { Chain, getDefaultConfig } from '@rainbow-me/rainbowkit'
 
-const customChain: Chain = {
+const opencampus: Chain = {
    id: 656476,
    name: 'Open Campus Codex',
    nativeCurrency: {
@@ -34,7 +34,7 @@ const customChain: Chain = {
 
 const projectId = 'bc94ee6ebbca89c09b454734c8b29313';
 
-const supportedChains: Chain[] = [sepolia, bscTestnet, blastSepolia,customChain];
+const supportedChains: Chain[] = [sepolia, bscTestnet, blastSepolia,opencampus];
 
 export const config = getDefaultConfig({
    appName: 'WalletConnection',

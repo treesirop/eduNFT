@@ -57,6 +57,7 @@ async function getNFTCollectionByContractAddress(hash: string) {
   }
 }
 
+
 // 更新NFT合集信息
 async function updateNFTCollection(id: number, updates: Partial<typeof nftCollections.$inferInsert>) {
   if (!id) {
