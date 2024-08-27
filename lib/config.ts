@@ -3,7 +3,8 @@
 import { http, createStorage, cookieStorage } from 'wagmi'
 import { sepolia, bscTestnet, blastSepolia } from 'wagmi/chains'
 import { Chain, getDefaultConfig } from '@rainbow-me/rainbowkit'
-
+import * as dotenv from "dotenv" ;
+dotenv.config();
 const opencampus: Chain = {
    id: 656476,
    name: 'Open Campus Codex',
@@ -27,12 +28,9 @@ const opencampus: Chain = {
      },
    },
    testnet: true,
-   custom: {
-     settlementLayer: 'Arbitrum Sepolia 421614',
-   },
  };
 
-const projectId = 'bc94ee6ebbca89c09b454734c8b29313';
+const projectId = process.env.PROJECT_ID as string
 
 const supportedChains: Chain[] = [sepolia, bscTestnet, blastSepolia,opencampus];
 
