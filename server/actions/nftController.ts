@@ -8,11 +8,11 @@ async function getDbConnection() {
   return db;
 }
 
-async function createNFT(hash: string, tokenId: number, userId: number) {
+async function createNFT(tokenURI: string, tokenId: number, userId: number) {
   const db = await getDbConnection();
   const result = await db.insert(nfts).values({
     tokenId,
-    hash,
+    tokenURI,
     userId: BigInt(userId), // 将 userId 转换为 bigint 类型
     mintedAt: new Date(), // 或者使用你的默认值函数
   }).execute();
@@ -35,10 +35,9 @@ async function getAllNFTs() {
 async function getNFTById(id: number) {
   const db = await getDbConnection();
   try {
-    const result = await db.query.nfts.findMany({
-      where: eq(nfts.id, id),
-    });
-    return result[0] || null; // 返回第一个匹配的结果或 null
+    const result = await db.select().from(nfts).where(eq(nfts.userId, BigInt(id)));
+  
+    return result || null; // 返回第一个匹配的结果或 null
   } catch (error) {
     console.error('Error fetching NFT by ID:', error);
     throw new Error('Unable to fetch NFT');

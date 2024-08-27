@@ -23,7 +23,7 @@ export default function Home() {
     address: contractAddress,
     abi,
     eventName: 'CertificateMinted',
-    onLogs(logs,prevLogs) {
+    onLogs(logs) {
       if(logs){
         setLogEnv(logs);
       }
@@ -31,7 +31,55 @@ export default function Home() {
     onError(error) {
       console.error('Error watching contract event:', error);
     }
-  });
+});
+
+useEffect(() => {
+  console.log(logEnv);
+  // 将NFT信息存进NFT表中
+  (async () => {
+    try {
+      const tokenId = Number(logEnv[0].args.tokenId);
+      const tokenURI = logEnv[0].args.tokenURI;
+      const response = await fetch('/api/nft', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tokenURI: tokenURI, tokenId: tokenId, userAddress: address }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Nft posted successfully:',data);
+        // 把mint信息转换
+      } else {
+        console.log('Failed to post nft:', response.statusText);
+      }
+    } catch (error) {
+      console.log('Error posting nft:', error);
+    }
+
+    try {
+      const response = await fetch(`/api/nft?address=${address}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Nft retrieved successfully:', data);
+        // 处理返回的 NFT 信息
+      } else {
+        console.log('Failed to retrieve nft:', response.statusText);
+      }
+    } catch (error) {
+      console.log('Error retrieving nft:', error);
+    }
+    
+  })();
+}, [logEnv]);
   
   useEffect(() => {
    

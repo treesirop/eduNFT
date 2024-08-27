@@ -28,7 +28,7 @@ export const teachers = mysqlTable('Teachers', {
 export const nfts = mysqlTable('NFTs', {
   id: serial('id').primaryKey(),
   tokenId: int('token_id').notNull(),
-  hash: varchar('hash',{length: 255}).notNull(),
+  tokenURI: varchar('hash',{length: 512}).notNull(),
   userId: bigint('user_id',{mode: "bigint"}).references(() => users.id).notNull(),
   mintedAt: timestamp('minted_at').defaultNow().notNull(),
 });

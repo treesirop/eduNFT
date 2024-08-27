@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "0b99c8de-bc96-4b5b-88e9-e44e5a4e9ec1",
+  "id": "6fa27edc-a2a4-4bbd-9d9d-94228622ea6d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Admins": {
@@ -161,34 +161,13 @@
         },
         "hash": {
           "name": "hash",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "ocid": {
-          "name": "ocid",
-          "type": "varchar(255)",
+          "type": "varchar(512)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "user_id": {
           "name": "user_id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "teacher_id": {
-          "name": "teacher_id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "collection_id": {
-          "name": "collection_id",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
@@ -211,32 +190,6 @@
           "tableTo": "Users",
           "columnsFrom": [
             "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "NFTs_teacher_id_Teachers_id_fk": {
-          "name": "NFTs_teacher_id_Teachers_id_fk",
-          "tableFrom": "NFTs",
-          "tableTo": "Teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "NFTs_collection_id_NFTCollections_id_fk": {
-          "name": "NFTs_collection_id_NFTCollections_id_fk",
-          "tableFrom": "NFTs",
-          "tableTo": "NFTCollections",
-          "columnsFrom": [
-            "collection_id"
           ],
           "columnsTo": [
             "id"

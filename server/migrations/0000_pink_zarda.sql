@@ -20,11 +20,8 @@ CREATE TABLE `NFTCollections` (
 CREATE TABLE `NFTs` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`token_id` int NOT NULL,
-	`hash` varchar(255) NOT NULL,
-	`ocid` varchar(255) NOT NULL,
+	`hash` varchar(512) NOT NULL,
 	`user_id` bigint NOT NULL,
-	`teacher_id` bigint NOT NULL,
-	`collection_id` bigint NOT NULL,
 	`minted_at` timestamp NOT NULL DEFAULT (now()),
 	CONSTRAINT `NFTs_id` PRIMARY KEY(`id`)
 );
@@ -48,6 +45,4 @@ CREATE TABLE `Users` (
 --> statement-breakpoint
 ALTER TABLE `NFTCollections` ADD CONSTRAINT `NFTCollections_user_id_Users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `NFTCollections` ADD CONSTRAINT `NFTCollections_teacher_id_Teachers_id_fk` FOREIGN KEY (`teacher_id`) REFERENCES `Teachers`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `NFTs` ADD CONSTRAINT `NFTs_user_id_Users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `NFTs` ADD CONSTRAINT `NFTs_teacher_id_Teachers_id_fk` FOREIGN KEY (`teacher_id`) REFERENCES `Teachers`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `NFTs` ADD CONSTRAINT `NFTs_collection_id_NFTCollections_id_fk` FOREIGN KEY (`collection_id`) REFERENCES `NFTCollections`(`id`) ON DELETE no action ON UPDATE no action;
+ALTER TABLE `NFTs` ADD CONSTRAINT `NFTs_user_id_Users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`) ON DELETE no action ON UPDATE no action;

@@ -82,7 +82,7 @@ const AdminDashboard = () => {
   }, []);
 
   useWatchContractEvent({
-      address: "0x4c6F990402B63f04Cd6c3A226538c1ACAd7ABc8C",
+      address: "0x6c0cEF068ee976A649a447C90F19939242D701DB",
       abi,
       eventName: 'CertificateIssued',
       onLogs(logs,prevLogs) {
@@ -205,14 +205,38 @@ const AdminDashboard = () => {
   };
 
   const handleIssue = async () => {
-    // 链上issue 
+    // 获取选中的 collection 的 name
+    let selectedCollectionName = "result";
+  try {
+    const response = await fetch('/api/collections/name', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contractHash: courseAddress,
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      selectedCollectionName = result;
+      alert('Data saved successfully: ' + JSON.stringify(result));
+    }
+  } catch (error) {
+    console.error('Error saving data:', error);
+    alert('Error saving data: ' + error.message);
+  }
+
+  
+    // 链上 issue
     writeContract({
       abi,
       address: courseAddress,
       functionName: 'issueCertificate',
       args: [
         userAddress,
-        'web3 strating',
+        selectedCollectionName, // 使用选中的 collection 的 name
       ],
     },
       {
@@ -229,7 +253,7 @@ const AdminDashboard = () => {
                 userHash: userAddress
               }),
             });
-
+  
             if (response.ok) {
               const result = await response.json();
               alert('Data saved successfully: ' + JSON.stringify(result));
@@ -238,20 +262,13 @@ const AdminDashboard = () => {
             console.error('Error saving data:', error);
             alert('Error saving data: ' + error.message);
           }
-        
         },
         async onError(error) {
           alert(error);
         }
       }
-
-    )
-    // 捕获链上合约issueCertificate事件
-
-    // 捕获成功后，根据user_address,CourseName，更新数据库，允许用户mint
-
+    );
   };
-
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-12">
       <ConnectBtn />
@@ -295,7 +312,7 @@ const AdminDashboard = () => {
                     className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
                     onClick={() => handleDeploy(collection, index)}
                   >
-                    Deploy
+                    Allow
                   </button>
                 </td>
               </tr>
