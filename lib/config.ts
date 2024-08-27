@@ -1,5 +1,4 @@
 'use client';
-
 import { http, createStorage, cookieStorage } from 'wagmi'
 import { sepolia, bscTestnet, blastSepolia } from 'wagmi/chains'
 import { Chain, getDefaultConfig } from '@rainbow-me/rainbowkit'
@@ -30,7 +29,7 @@ const opencampus: Chain = {
    testnet: true,
  };
 
-const projectId = process.env.PROJECT_ID as string
+const projectId = 'bc94ee6ebbca89c09b454734c8b29313';
 
 const supportedChains: Chain[] = [sepolia, bscTestnet, blastSepolia,opencampus];
 

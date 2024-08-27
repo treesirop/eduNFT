@@ -82,7 +82,7 @@ const AdminDashboard = () => {
   }, []);
 
   useWatchContractEvent({
-      address: "0x6c0cEF068ee976A649a447C90F19939242D701DB",
+      address: courseAddress,
       abi,
       eventName: 'CertificateIssued',
       onLogs(logs,prevLogs) {
