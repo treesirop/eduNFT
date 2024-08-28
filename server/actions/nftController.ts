@@ -8,10 +8,12 @@ async function getDbConnection() {
   return db;
 }
 
-async function createNFT(tokenURI: string, tokenId: number, userId: number) {
+async function createNFT(tokenURI: string, tokenId: string, userId: number) {
   const db = await getDbConnection();
+  const tokenIdBigInt = BigInt(tokenId); // 将字符串转换为 BigInt
+
   const result = await db.insert(nfts).values({
-    tokenId,
+    tokenId: tokenIdBigInt,
     tokenURI,
     userId: BigInt(userId), // 将 userId 转换为 bigint 类型
     mintedAt: new Date(), // 或者使用你的默认值函数

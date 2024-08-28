@@ -9,7 +9,7 @@ import { useWriteContract} from 'wagmi'
 import { parseEther } from 'viem'
 import { abi, bytecode } from "../../lib/CourseCertificate.json"
 import { useAccount } from 'wagmi';
-import { useWalletClient } from 'wagmi'
+
 export default function Home() {
   const { authState, ocAuth } = useOCAuth();
   const [collections, setCollections] = useState([]);
@@ -18,20 +18,21 @@ export default function Home() {
   const [contractAddress,setContractAddress] = useState();
   const { address, chain } = useAccount();
   const [logEnv,setLogEnv] = useState([]);
-  
-  useWatchContractEvent({
-    address: contractAddress,
-    abi,
-    eventName: 'CertificateMinted',
-    onLogs(logs) {
-      if(logs){
-        setLogEnv(logs);
-      }
-    },
-    onError(error) {
-      console.error('Error watching contract event:', error);
-    }
-});
+
+    
+//   useWatchContractEvent({
+//     address: contractAddress,
+//     abi,
+//     eventName: 'CertificateMinted',
+//     onLogs(logs) {
+//       if(logs){
+//         setLogEnv(logs);
+//       }
+//     },
+//     onError(error) {
+//       console.error('Error watching contract event:', error);
+//     }
+// });
 
 useEffect(() => {
   console.log(logEnv);

@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const opts = {
-    redirectUri: 'http://localhost:3000/redirect', // Adjust this URL
+    redirectUri: 'http://localhost:3010/redirect', // Adjust this URL
   };
   const cookie = headers().get("cookie");
   return (

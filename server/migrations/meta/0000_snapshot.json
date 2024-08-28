@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "6fa27edc-a2a4-4bbd-9d9d-94228622ea6d",
+  "id": "294923f4-1f31-4dd3-98c4-3691b72a5db5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Admins": {
@@ -154,7 +154,7 @@
         },
         "token_id": {
           "name": "token_id",
-          "type": "int",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

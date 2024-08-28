@@ -19,7 +19,7 @@ CREATE TABLE `NFTCollections` (
 --> statement-breakpoint
 CREATE TABLE `NFTs` (
 	`id` serial AUTO_INCREMENT NOT NULL,
-	`token_id` int NOT NULL,
+	`token_id` bigint NOT NULL,
 	`hash` varchar(512) NOT NULL,
 	`user_id` bigint NOT NULL,
 	`minted_at` timestamp NOT NULL DEFAULT (now()),
