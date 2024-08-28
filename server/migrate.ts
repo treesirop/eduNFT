@@ -1,13 +1,9 @@
 import { migrate } from 'drizzle-orm/mysql2/migrator';
-import { connectToDatabase } from '.'; // 确保路径正确
+import { db,connection } from '.'; // 确保路径正确
 
 async function runMigrations() {
-  let db, connection;
-  try {
-    const result = await connectToDatabase(); // 获取数据库连接
-    db = result.db;
-    connection = result.connection;
 
+  try {
     // 运行迁移
     await migrate(db, { migrationsFolder: './server/migrations' });
     console.log('Migrations completed successfully.');

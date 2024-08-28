@@ -1,10 +1,9 @@
 import { admins } from '../schema';
-import { connectToDatabase } from ".."; // 确保路径正确
+import { db } from ".."; // 确保路径正确
 import { eq, SQL, SQLWrapper } from 'drizzle-orm';
 
 // 创建管理员
 async function createAdmin(username: any, password: any, email: any) {
-  const { db } = await connectToDatabase(); // 获取数据库连接
 
   const result = await db.insert(admins).values({
     username,
@@ -16,8 +15,6 @@ async function createAdmin(username: any, password: any, email: any) {
 
 // 获取所有管理员
 async function getAllAdmins() {
-  const { db } = await connectToDatabase(); // 获取数据库连接
-
   try {
     const result = await db.select().from(admins).execute();
     return result;
@@ -29,8 +26,6 @@ async function getAllAdmins() {
 
 // 根据ID获取管理员
 async function getAdminById(id: number | SQLWrapper) {
-  const { db } = await connectToDatabase(); // 获取数据库连接
-
   try {
     const result = await db.query.admins.findMany({
       where: eq(admins.id, id),
@@ -44,7 +39,6 @@ async function getAdminById(id: number | SQLWrapper) {
 
 // 更新管理员信息
 async function updateAdmin(id: number | SQLWrapper, updates: { username?: string | SQL<unknown> | undefined; password?: string | SQL<unknown> | undefined; email?: string | SQL<unknown> | undefined; id?: number | SQL<unknown> | undefined; createdAt?: SQL<unknown> | Date | undefined; }) {
-  const { db } = await connectToDatabase(); // 获取数据库连接
 
   try {
     const result = await db
@@ -61,8 +55,6 @@ async function updateAdmin(id: number | SQLWrapper, updates: { username?: string
 
 // 删除管理员
 async function deleteAdmin(id: number | SQLWrapper) {
-  const { db } = await connectToDatabase(); // 获取数据库连接
-
   try {
     const result = await db
       .delete(admins)

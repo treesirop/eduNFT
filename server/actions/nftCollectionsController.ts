@@ -1,16 +1,10 @@
 import { nftCollections } from '../schema';
-import { connectToDatabase } from ".."; // 确保路径正确
+import { db } from ".."; // 确保路径正确
 import { eq } from 'drizzle-orm';
-
-// 封装数据库连接逻辑
-async function getDbConnection() {
-  const { db, connection } = await connectToDatabase();
-  return db;
-}
 
 // 创建NFT合集
 async function createNFTCollection(name: string, is_approved: boolean,contractAddress: string, teacher_id: number) {
-  const db = await getDbConnection(); 
+
   const result = await db.insert(nftCollections).values({
     name,
     is_approved,
@@ -23,19 +17,21 @@ async function createNFTCollection(name: string, is_approved: boolean,contractAd
 
 // 获取所有NFT合集
 async function getAllNFTCollections() {
-  const db = await getDbConnection();
+
   try {
     const result = await db.select().from(nftCollections).execute();
     return result;
   } catch (error) {
     console.error('Error fetching NFT Collections:', error);
     throw new Error('Unable to fetch NFT Collections');
+  } finally {
+    
   }
 }
 
 // 根据ID获取NFT合集
 async function getNFTCollectionByTeacherId(teacher_id: bigint) {
-  const db = await getDbConnection();
+
   try {
     const result = await db.select().from(nftCollections).where(eq(nftCollections.teacherId, teacher_id));
     return result || null; // 返回第一个匹配的结果或 null  
@@ -47,7 +43,7 @@ async function getNFTCollectionByTeacherId(teacher_id: bigint) {
 
 // 根据ID获取NFT合集
 async function getNFTCollectionByContractAddress(hash: string) {
-  const db = await getDbConnection();
+
   try {
     const result = await db.select().from(nftCollections).where(eq(nftCollections.contractAddress, hash)).limit(1);
     return result[0] || null; // 返回第一个匹配的结果或 null  
@@ -63,8 +59,6 @@ async function updateNFTCollection(id: number, updates: Partial<typeof nftCollec
   if (!id) {
     throw new Error('Invalid parameters: id is missing');
   }
-
-  const db = await getDbConnection();
   try {
     const result = await db
       .update(nftCollections)
@@ -80,7 +74,6 @@ async function updateNFTCollection(id: number, updates: Partial<typeof nftCollec
 
 // 删除NFT合集
 async function deleteNFTCollection(id: number) {
-  const db = await getDbConnection();
   try {
     const result = await db
       .delete(nftCollections)

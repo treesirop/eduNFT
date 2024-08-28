@@ -1,16 +1,9 @@
 import { nfts, users } from '../schema';
-import { connectToDatabase } from ".."; // 确保路径正确
+import { db } from ".."; // 确保路径正确
 import { eq } from 'drizzle-orm';
-
-// 封装数据库连接逻辑
-async function getDbConnection() {
-  const { db, connection } = await connectToDatabase();
-  return db;
-}
 
 // 创建用户
 async function createUser(userhash: string) {
-  const db = await getDbConnection();
   const result = await db.insert(users).values({
     userhash,
     createdAt: new Date(), // 或者使用你的默认值函数
@@ -19,7 +12,6 @@ async function createUser(userhash: string) {
 }
 
 async function getAllUsers() {
-  const db = await getDbConnection();
   try {
     // 使用Drizzle ORM的API
     const result = await db.select().from(users).execute();
@@ -31,7 +23,6 @@ async function getAllUsers() {
 }
 
 async function getUserIdByAddress(hash: string){
-  const db = await getDbConnection();
   try {
     // 使用 Drizzle ORM 的查询构造方法
     const result = await db.select().from(users).where(eq(users.userhash, hash)).limit(1);
@@ -43,7 +34,6 @@ async function getUserIdByAddress(hash: string){
 }
 
 async function isExist(hash: string): Promise<boolean> {
-  const db = await getDbConnection();
   try {
     // 使用 Drizzle ORM 的查询构造方法
     const result = await db.select().from(users).where(eq(users.userhash, hash));
@@ -57,7 +47,6 @@ async function isExist(hash: string): Promise<boolean> {
 }
 // 根据ID获取用户
 async function getUserById(id: number) {
-  const db = await getDbConnection();
   try {
     // 使用 Drizzle ORM 的查询构造方法
     const result = await db.query.users.findMany({
@@ -72,7 +61,6 @@ async function getUserById(id: number) {
 
 // 更新用户信息
 async function updateUser(id: number, updates: Partial<typeof users.$inferInsert>) {
-  const db = await getDbConnection();
   try {
     // 使用 Drizzle ORM 的更新方法
     const result = await db
@@ -89,7 +77,6 @@ async function updateUser(id: number, updates: Partial<typeof users.$inferInsert
 
 // 删除用户
 async function deleteUser(id: number) {
-  const db = await getDbConnection();
   try {
     // 使用 Drizzle ORM 的删除方法
     const result = await db
@@ -104,7 +91,6 @@ async function deleteUser(id: number) {
 }
 
 async function getUserNfts(userId: number) {
-  const db = await getDbConnection();
   try {
     // 查询用户的 NFT 信息，同时加载关联的 Teacher 和 NFTCollection 信息
     const userNfts = await db.query.nfts.findMany({

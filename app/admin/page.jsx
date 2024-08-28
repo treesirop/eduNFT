@@ -98,7 +98,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (isLoggedIn) {
       fetchApply();
-      const intervalId = setInterval(fetchApply, 200000); // Poll every 5 seconds
+      const intervalId = setInterval(fetchApply, 5000); // Poll every 5 seconds
       return () => clearInterval(intervalId); // Cleanup on unmount
     }
   }, [isLoggedIn]);

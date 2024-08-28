@@ -87,7 +87,7 @@ useEffect(() => {
     console.log(authState);
     // Fetch courses data from the API
     fetchCourse();
-    const intervalId = setInterval(fetchCourse, 15000000); // Poll every 5 seconds
+    const intervalId = setInterval(fetchCourse, 5000); // Poll every 5 seconds
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, [authState]); // Now it will log whenever authState changes
 

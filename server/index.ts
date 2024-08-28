@@ -10,13 +10,16 @@ type DBSchema = {
   admins: typeof admins
 };
 
-export async function connectToDatabase(): Promise<{ db: MySql2Database<DBSchema>; connection: mysql.Connection }> {
-  const connection = await mysql.createPool({
-    host: "localhost",
-    user: "root",
-    database: "api",
-    password: "123456",
-  });
-  const db = drizzle<DBSchema>(connection);
-  return { db, connection };
+const connection = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  database: "api",
+  password: "123456",
+});
+const db = drizzle<DBSchema>(connection);
+
+
+export{
+  db,
+  connection
 }

@@ -1,15 +1,8 @@
 import { nfts } from '../schema';
-import { connectToDatabase } from ".."; // 确保路径正确
+import { db } from ".."; // 确保路径正确
 import { eq } from 'drizzle-orm';
 
-// 封装数据库连接逻辑
-async function getDbConnection() {
-  const { db, connection } = await connectToDatabase();
-  return db;
-}
-
 async function createNFT(tokenURI: string, tokenId: string, userId: number) {
-  const db = await getDbConnection();
   const tokenIdBigInt = BigInt(tokenId); // 将字符串转换为 BigInt
 
   const result = await db.insert(nfts).values({
@@ -23,7 +16,6 @@ async function createNFT(tokenURI: string, tokenId: string, userId: number) {
 
 // 获取所有NFTs
 async function getAllNFTs() {
-  const db = await getDbConnection();
   try {
     const result = await db.select().from(nfts).execute();
     return result;
@@ -35,7 +27,6 @@ async function getAllNFTs() {
 
 // 根据ID获取NFT
 async function getNFTById(id: number) {
-  const db = await getDbConnection();
   try {
     const result = await db.select().from(nfts).where(eq(nfts.userId, BigInt(id)));
   
@@ -48,7 +39,6 @@ async function getNFTById(id: number) {
 
 // 更新NFT信息
 async function updateNFT(id: number, updates: Partial<typeof nfts.$inferInsert>) {
-  const db = await getDbConnection();
   try {
     const result = await db
       .update(nfts)
@@ -64,7 +54,6 @@ async function updateNFT(id: number, updates: Partial<typeof nfts.$inferInsert>)
 
 // 删除NFT
 async function deleteNFT(id: number) {
-  const db = await getDbConnection();
   try {
     const result = await db
       .delete(nfts)
