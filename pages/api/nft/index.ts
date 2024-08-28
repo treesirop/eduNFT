@@ -46,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const serializedNfts = NFTs.map(nft => {
           return {
             ...nft,
+            tokenId:nft.tokenId.toString(),
             userId: nft.userId.toString(),
           };
         });
