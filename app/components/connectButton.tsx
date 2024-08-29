@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 import {
   useConnectModal,
   useAccountModal,
   useChainModal,
-} from "@rainbow-me/rainbowkit";
-import { useAccount, useDisconnect } from "wagmi";
-import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
+} from '@rainbow-me/rainbowkit';
+import { useAccount, useDisconnect } from 'wagmi';
+import { emojiAvatarForAddress } from '@/lib/emojiAvatarForAddress';
 
 export const ConnectBtn = () => {
-  const {  address, isConnected, chain } = useAccount();
+  const { address, isConnected, chain } = useAccount();
   const { color: backgroundColor, emoji } = emojiAvatarForAddress(
-    address ?? ""
+    address ?? '',
   );
 
   const { openConnectModal } = useConnectModal();
@@ -37,7 +37,6 @@ export const ConnectBtn = () => {
           }
           openConnectModal?.();
         }}
-        
       >
         Connect your wallet
       </button>
@@ -64,7 +63,7 @@ export const ConnectBtn = () => {
           className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
           style={{
             backgroundColor,
-            boxShadow: "0px 2px 2px 0px rgba(81, 98, 255, 0.20)",
+            boxShadow: '0px 2px 2px 0px rgba(81, 98, 255, 0.20)',
           }}
         >
           {emoji}

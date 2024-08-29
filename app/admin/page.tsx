@@ -1,30 +1,37 @@
-"use client";
+'use client';
 import { useWriteContract } from 'wagmi';
-import { parseEther } from 'viem';
-import React, { useEffect, useState, FormEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { abi, bytecode } from "../../lib/CourseCertificate.json";
+import { abi } from '../../lib/CourseCertificate.json';
 import { ConnectBtn } from '../components/connectButton';
-import { useWaitForTransactionReceipt ,useWatchContractEvent} from 'wagmi'
+import { useWatchContractEvent } from 'wagmi';
+import redisClient from '../../lib/redisClient';
+interface Collection {
+  id: number;
+  name: string;
+  is_approved: boolean;
+  contractAddress: string;
+  user_id: number;
+  teacherId: number;
+  createdAt: string;
+}
 
-const AdminDashboard = () => {
+interface InputValues {
+  [key: number]: string;
+}
+
+const AdminDashboard: React.FC = () => {
   const { writeContract } = useWriteContract();
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [adminId, setAdminId] = useState(null);
-  const [collections, setCollections] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState(null);
-  const [inputValues, setInputValues] = useState({});
-  const [courseAddress, setCourseAddress] = useState('');
-  const [userAddress, setUserAddress] = useState('');
-  const [hashData, setHashData] = useState('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [adminId, setAdminId] = useState<number | null>(null);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [inputValues, setInputValues] = useState<InputValues>({});
+  const [courseAddress, setCourseAddress] = useState<string>('');
+  const [userAddress, setUserAddress] = useState<string>('');
 
-  // const result = useWaitForTransactionReceipt({
-  //   hash: hashData,
-  //   pollingInterval: 1000
-  // });
   const handleLogin = async () => {
     try {
       const response = await fetch('/api/admin/', {
@@ -40,7 +47,7 @@ const AdminDashboard = () => {
       if (data[0]?.id) {
         setAdminId(data[0].id);
         setIsLoggedIn(true);
-        localStorage.setItem('adminId', data[0].id);
+        localStorage.setItem('adminId', data[0].id.toString());
         localStorage.setItem('isLoggedIn', 'true');
       } else {
         console.error('Login failed: ID not returned');
@@ -67,8 +74,6 @@ const AdminDashboard = () => {
     }
   };
 
-  
-
   // Check login status on component mount
   useEffect(() => {
     const storedAdminId = localStorage.getItem('adminId');
@@ -78,23 +83,18 @@ const AdminDashboard = () => {
       setAdminId(Number(storedAdminId));
       setIsLoggedIn(true);
     }
-    
   }, []);
 
   useWatchContractEvent({
-      address: courseAddress,
-      abi,
-      eventName: 'CertificateIssued',
-      onLogs(logs,prevLogs) {
-        console.log('New logs!', logs);
-        console.log('pre logs!', prevLogs)
-      },
-      onError(error) {
-        console.error('Error watching contract event:', error);
-      }
+    address: courseAddress as `0x${string}`,
+    abi,
+    eventName: 'CertificateIssued',
+    onError(error) {
+      console.error('Error watching contract event:', error);
+    },
   });
 
-  // Fetch collections 
+  // Fetch collections
   useEffect(() => {
     if (isLoggedIn) {
       fetchApply();
@@ -108,7 +108,7 @@ const AdminDashboard = () => {
     const initialInputValues = collections.reduce((acc, collection, index) => {
       acc[index] = collection.contractAddress || '';
       return acc;
-    }, {});
+    }, {} as InputValues);
     setInputValues(initialInputValues);
   }, [collections]);
 
@@ -116,7 +116,9 @@ const AdminDashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-          <h1 className="text-2xl font-semibold mb-4 text-center">Admin Login</h1>
+          <h1 className="text-2xl font-semibold mb-4 text-center">
+            Admin Login
+          </h1>
           <input
             className="w-full mb-4 p-2 border rounded"
             type="text"
@@ -131,7 +133,8 @@ const AdminDashboard = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
             onClick={handleLogin}
           >
             Login
@@ -141,15 +144,15 @@ const AdminDashboard = () => {
     );
   }
 
-  const handleInputChange = (index, value) => {
-    setInputValues(prevInputValues => ({
+  const handleInputChange = (index: number, value: string) => {
+    setInputValues((prevInputValues) => ({
       ...prevInputValues,
       [index]: value,
     }));
   };
 
-  const handleDeploy = async (collection, index) => {
-    console.log("-----", collection);
+  const handleDeploy = async (collection: Collection, index: number) => {
+    console.log('-----', collection);
 
     const contractAddress = inputValues[index];
     if (!contractAddress) {
@@ -198,7 +201,7 @@ const AdminDashboard = () => {
         const errorMessage = await response.text();
         alert('Failed to save data: ' + errorMessage);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving data:', error);
       alert('Error saving data: ' + error.message);
     }
@@ -206,42 +209,42 @@ const AdminDashboard = () => {
 
   const handleIssue = async () => {
     // 获取选中的 collection 的 name
-    let selectedCollectionName = "result";
-  try {
-    const response = await fetch('/api/collections/name', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contractHash: courseAddress,
-      }),
-    });
+    let selectedCollectionName = 'result';
+    try {
+      const response = await fetch('/api/collections/name', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contractHash: courseAddress,
+        }),
+      });
 
-    if (response.ok) {
-      const result = await response.json();
-      selectedCollectionName = result;
-      alert('Data saved successfully: ' + JSON.stringify(result));
+      if (response.ok) {
+        const result = await response.json();
+        selectedCollectionName = result;
+        alert('Data saved successfully: ' + JSON.stringify(result));
+      }
+    } catch (error: any) {
+      console.error('Error saving data:', error);
+      alert('Error saving data: ' + error.message);
     }
-  } catch (error) {
-    console.error('Error saving data:', error);
-    alert('Error saving data: ' + error.message);
-  }
 
-  
     // 链上 issue
-    writeContract({
-      abi,
-      address: courseAddress,
-      functionName: 'issueCertificate',
-      args: [
-        userAddress,
-        selectedCollectionName, // 使用选中的 collection 的 name
-      ],
-    },
+    writeContract(
+      {
+        abi,
+        address: courseAddress as `0x${string}`,
+        functionName: 'issueCertificate',
+        args: [
+          userAddress,
+          selectedCollectionName, // 使用选中的 collection 的 name
+        ],
+      },
       {
         async onSuccess(data) {
-          alert("successful");
+          alert('successful');
           try {
             const response = await fetch('/api/collections/update', {
               method: 'PUT',
@@ -250,25 +253,26 @@ const AdminDashboard = () => {
               },
               body: JSON.stringify({
                 contractHash: courseAddress,
-                userHash: userAddress
+                userHash: userAddress,
               }),
             });
-  
+
             if (response.ok) {
               const result = await response.json();
               alert('Data saved successfully: ' + JSON.stringify(result));
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error('Error saving data:', error);
             alert('Error saving data: ' + error.message);
           }
         },
         async onError(error) {
           alert(error);
-        }
-      }
+        },
+      },
     );
   };
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-12">
       <ConnectBtn />
@@ -276,7 +280,9 @@ const AdminDashboard = () => {
 
       {/* Review Applications */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Review Course Applications</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          Review Course Applications
+        </h2>
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr>
@@ -289,7 +295,9 @@ const AdminDashboard = () => {
           <tbody>
             {collections.map((collection, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b text-left">{collection.name}</td>
+                <td className="py-2 px-4 border-b text-left">
+                  {collection.name}
+                </td>
                 <td className="py-2 px-4 border-b text-left">
                   <input
                     type="text"
@@ -301,7 +309,11 @@ const AdminDashboard = () => {
                 </td>
                 <td className="py-2 px-4 border-b text-left">
                   <button
-                    className={`px-4 py-2 rounded ${collection.is_approved ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+                    className={`px-4 py-2 rounded ${
+                      collection.is_approved
+                        ? 'bg-green-500 text-white'
+                        : 'bg-red-500 text-white'
+                    }`}
                     disabled={!collection.is_approved}
                   >
                     {collection.is_approved ? 'Approved' : 'Not Approved'}
@@ -327,7 +339,12 @@ const AdminDashboard = () => {
 
         <form className="flex space-x-4">
           <div className="flex-1">
-            <label htmlFor="courseName" className="block text-sm font-medium text-gray-700">ContractHash</label>
+            <label
+              htmlFor="courseName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              ContractHash
+            </label>
             <input
               type="text"
               id="courseName"
@@ -339,7 +356,12 @@ const AdminDashboard = () => {
             />
           </div>
           <div className="flex-1">
-            <label htmlFor="userAddress" className="block text-sm font-medium text-gray-700">User Address</label>
+            <label
+              htmlFor="userAddress"
+              className="block text-sm font-medium text-gray-700"
+            >
+              User Address
+            </label>
             <input
               type="text"
               id="userAddress"

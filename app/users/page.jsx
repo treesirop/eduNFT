@@ -1,88 +1,84 @@
-"use client";
+'use client';
 
 import LoginButton from '../components/LoginButton';
-import { useWatchContractEvent} from 'wagmi'
 import { useOCAuth } from '@opencampus/ocid-connect-js';
-import { ConnectBtn } from "../components/connectButton";
+import { ConnectBtn } from '../components/connectButton';
 import { useEffect, useState } from 'react';
-import { useWriteContract} from 'wagmi'
-import { parseEther } from 'viem'
-import { abi, bytecode } from "../../lib/CourseCertificate.json"
+import { useWriteContract } from 'wagmi';
+import { abi, bytecode } from '../../lib/CourseCertificate.json';
 import { useAccount } from 'wagmi';
 
 export default function Home() {
   const { authState, ocAuth } = useOCAuth();
   const [collections, setCollections] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const { writeContract } = useWriteContract()
-  const [contractAddress,setContractAddress] = useState();
+  const { writeContract } = useWriteContract();
+  const [contractAddress, setContractAddress] = useState();
   const { address, chain } = useAccount();
 
-    
-//   useWatchContractEvent({
-//     address: contractAddress,
-//     abi,
-//     eventName: 'CertificateMinted',
-//     onLogs(logs) {
-//       if(logs){
-//         setLogEnv(logs);
-//       }
-//     },
-//     onError(error) {
-//       console.error('Error watching contract event:', error);
-//     }
-// });
+  //   useWatchContractEvent({
+  //     address: contractAddress,
+  //     abi,
+  //     eventName: 'CertificateMinted',
+  //     onLogs(logs) {
+  //       if(logs){
+  //         setLogEnv(logs);
+  //       }
+  //     },
+  //     onError(error) {
+  //       console.error('Error watching contract event:', error);
+  //     }
+  // });
 
-// useEffect(() => {
-//   console.log(logEnv);
-//   // 将NFT信息存进NFT表中
-//   (async () => {
-//     try {
-//       const tokenId = Number(logEnv[0].args.tokenId);
-//       const tokenURI = logEnv[0].args.tokenURI;
-//       const response = await fetch('/api/nft', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ tokenURI: tokenURI, tokenId: tokenId, userAddress: address }),
-//       });
+  // useEffect(() => {
+  //   console.log(logEnv);
+  //   // 将NFT信息存进NFT表中
+  //   (async () => {
+  //     try {
+  //       const tokenId = Number(logEnv[0].args.tokenId);
+  //       const tokenURI = logEnv[0].args.tokenURI;
+  //       const response = await fetch('/api/nft', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ tokenURI: tokenURI, tokenId: tokenId, userAddress: address }),
+  //       });
 
-//       if (response.ok) {
-//         const data = await response.json();
-//         console.log('Nft posted successfully:',data);
-//         // 把mint信息转换
-//       } else {
-//         console.log('Failed to post nft:', response.statusText);
-//       }
-//     } catch (error) {
-//       console.log('Error posting nft:', error);
-//     }
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         console.log('Nft posted successfully:',data);
+  //         // 把mint信息转换
+  //       } else {
+  //         console.log('Failed to post nft:', response.statusText);
+  //       }
+  //     } catch (error) {
+  //       console.log('Error posting nft:', error);
+  //     }
 
-//     try {
-//       const response = await fetch(`/api/nft?address=${address}`, {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//       });
+  //     try {
+  //       const response = await fetch(`/api/nft?address=${address}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
 
-//       if (response.ok) {
-//         const data = await response.json();
-//         console.log('Nft retrieved successfully:', data);
-//         // 处理返回的 NFT 信息
-//       } else {
-//         console.log('Failed to retrieve nft:', response.statusText);
-//       }
-//     } catch (error) {
-//       console.log('Error retrieving nft:', error);
-//     }
-    
-//   })();
-// }, [logEnv]);
-  
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         console.log('Nft retrieved successfully:', data);
+  //         // 处理返回的 NFT 信息
+  //       } else {
+  //         console.log('Failed to retrieve nft:', response.statusText);
+  //       }
+  //     } catch (error) {
+  //       console.log('Error retrieving nft:', error);
+  //     }
+
+  //   })();
+  // }, [logEnv]);
+
   useEffect(() => {
-   
     console.log(authState);
     // Fetch courses data from the API
     fetchCourse();
@@ -99,7 +95,7 @@ export default function Home() {
   if (authState.error) {
     return <div>Error: {authState.error.message}</div>;
   }
-  
+
   const fetchCourse = async () => {
     try {
       // 获取nftcollections的信息，显示申请表
@@ -122,25 +118,24 @@ export default function Home() {
     console.log('Selected Course:', course);
     const ocid = ocAuth.getAuthInfo().edu_username;
     setContractAddress(course.contractAddress);
-    writeContract({
-      abi,
-      address: course.contractAddress,
-      functionName: 'mintCertificate',
-      args: [
-        ocid
-      ],
-    },
-    {
-      async onSuccess(data) {
-        alert("successful");
-        console.log(data);
-        // 将hash存在NFTs表中
-
+    writeContract(
+      {
+        abi,
+        address: course.contractAddress,
+        functionName: 'mintCertificate',
+        args: [ocid],
       },
-      async onError(error) {
-        alert(error);
-      }
-    });
+      {
+        async onSuccess(data) {
+          alert('successful');
+          console.log(data);
+          // 将hash存在NFTs表中
+        },
+        async onError(error) {
+          alert(error);
+        },
+      },
+    );
   };
   // Add a loading state
   if (authState.isLoading) {
@@ -159,7 +154,7 @@ export default function Home() {
 
       if (response.ok) {
         const data = await response.json();
-        ('User address posted successfully:', data);
+        'User address posted successfully:', data;
       } else {
         console.log('Failed to post user address:', response.statusText);
       }
@@ -173,7 +168,7 @@ export default function Home() {
       <div className="border-b z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
         <div className="flex space-x-20">
           <ConnectBtn />
-          <div className='flex justify-end'>
+          <div className="flex justify-end">
             {authState.isAuthenticated ? (
               <div className="flex items-center justify-center">
                 OCID: {JSON.stringify(ocAuth.getAuthInfo().edu_username)}
@@ -198,11 +193,19 @@ export default function Home() {
           <tbody>
             {collections.map((course, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b text-center">{course.name}</td>
-                <td className="py-2 px-4 border-b text-center">{course.contractAddress}</td>
                 <td className="py-2 px-4 border-b text-center">
-                  <button 
-                    className={`px-4 py-2 rounded ${course.user_id ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                  {course.name}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {course.contractAddress}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button
+                    className={`px-4 py-2 rounded ${
+                      course.user_id
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
                     disabled={!course.user_id}
                     onClick={() => handleMintClick(course)}
                   >

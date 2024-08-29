@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useOCAuth } from '@opencampus/ocid-connect-js';
 
