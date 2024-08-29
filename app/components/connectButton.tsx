@@ -10,7 +10,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
 
 export const ConnectBtn = () => {
-  const {  address, isConnected, chain } = useAccount();
+  const { address, isConnected, chain } = useAccount();
   const { color: backgroundColor, emoji } = emojiAvatarForAddress(
     address ?? ""
   );
@@ -37,7 +37,6 @@ export const ConnectBtn = () => {
           }
           openConnectModal?.();
         }}
-        
       >
         Connect your wallet
       </button>

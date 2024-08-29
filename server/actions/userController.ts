@@ -1,114 +1,112 @@
-import { nfts, users } from '../schema';
-import { db } from ".."; // 确保路径正确
-import { eq } from 'drizzle-orm';
+import { nfts, users } from "../schema";
+import { db } from "..";
+import { eq } from "drizzle-orm";
 
-// 创建用户
 async function createUser(userhash: string) {
-  const result = await db.insert(users).values({
-    userhash,
-    createdAt: new Date(), // 或者使用你的默认值函数
-  }).execute();
+  const result = await db
+    .insert(users)
+    .values({
+      userhash,
+      createdAt: new Date(),
+    })
+    .execute();
   return result;
 }
 
 async function getAllUsers() {
   try {
-    // 使用Drizzle ORM的API
     const result = await db.select().from(users).execute();
     return result;
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Unable to fetch users');
+    console.error("Error fetching users:", error);
+    throw new Error("Unable to fetch users");
   }
 }
 
-async function getUserIdByAddress(hash: string){
+async function getUserIdByAddress(hash: string) {
   try {
-    // 使用 Drizzle ORM 的查询构造方法
-    const result = await db.select().from(users).where(eq(users.userhash, hash)).limit(1);
-    return result[0] || null; // 返回第一个匹配的结果或 null
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.userhash, hash))
+      .limit(1);
+    return result[0] || null;
   } catch (error) {
-    console.error('Error fetching user by Hash:', error);
-    throw new Error('Unable to fetch user');
+    console.error("Error fetching user by Hash:", error);
+    throw new Error("Unable to fetch user");
   }
 }
 
 async function isExist(hash: string): Promise<boolean> {
   try {
-    // 使用 Drizzle ORM 的查询构造方法
-    const result = await db.select().from(users).where(eq(users.userhash, hash));
-    
-    // 如果结果数组中有元素，说明 hash 存在
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.userhash, hash));
+
     return result.length > 0;
   } catch (error) {
-    console.error('Error fetching user by Hash:', error);
-    throw new Error('Unable to fetch user');
-  }
-}
-// 根据ID获取用户
-async function getUserById(id: number) {
-  try {
-    // 使用 Drizzle ORM 的查询构造方法
-    const result = await db.query.users.findMany({
-      where: eq(users.id, id), // 使用 eq 操作符来过滤
-    });
-    return result[0] || null; // 返回第一个匹配的结果或 null
-  } catch (error) {
-    console.error('Error fetching user by ID:', error);
-    throw new Error('Unable to fetch user');
+    console.error("Error fetching user by Hash:", error);
+    throw new Error("Unable to fetch user");
   }
 }
 
-// 更新用户信息
-async function updateUser(id: number, updates: Partial<typeof users.$inferInsert>) {
+async function getUserById(id: number) {
   try {
-    // 使用 Drizzle ORM 的更新方法
+    const result = await db.query.users.findMany({
+      where: eq(users.id, id),
+    });
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    throw new Error("Unable to fetch user");
+  }
+}
+
+async function updateUser(
+  id: number,
+  updates: Partial<typeof users.$inferInsert>
+) {
+  try {
     const result = await db
       .update(users)
       .set(updates)
-      .where(eq(users.id, id)) // 使用 eq 操作符来过滤
+      .where(eq(users.id, id))
       .execute();
     return result;
   } catch (error) {
-    console.error('Error updating user:', error);
-    throw new Error('Unable to update user');
+    console.error("Error updating user:", error);
+    throw new Error("Unable to update user");
   }
 }
 
-// 删除用户
 async function deleteUser(id: number) {
   try {
-    // 使用 Drizzle ORM 的删除方法
-    const result = await db
-      .delete(users)
-      .where(eq(users.id, id)) // 使用 eq 操作符来过滤
-      .execute();
+    const result = await db.delete(users).where(eq(users.id, id)).execute();
     return result;
   } catch (error) {
-    console.error('Error deleting user:', error);
-    throw new Error('Unable to delete user');
+    console.error("Error deleting user:", error);
+    throw new Error("Unable to delete user");
   }
 }
 
 async function getUserNfts(userId: number) {
   try {
-    // 查询用户的 NFT 信息，同时加载关联的 Teacher 和 NFTCollection 信息
     const userNfts = await db.query.nfts.findMany({
-      where: (nfts, { eq }) =>  eq(nfts.userId, BigInt(userId)), // 使用 eq 操作符来过滤
+      where: (nfts, { eq }) => eq(nfts.userId, BigInt(userId)),
       with: {
-        teacher: true,  // 加载关联的教师信息
-        collection: true,  // 加载关联的 NFT 合集信息
+        teacher: true,
+        collection: true,
       },
     });
 
     return userNfts;
   } catch (error) {
-    console.error('Error fetching NFTs for user:', error);
-    throw new Error('Unable to fetch NFTs');
+    console.error("Error fetching NFTs for user:", error);
+    throw new Error("Unable to fetch NFTs");
   }
 }
 
-// 导出控制器函数
 export const userController = {
   createUser,
   getAllUsers,
@@ -117,5 +115,5 @@ export const userController = {
   deleteUser,
   getUserNfts,
   getUserIdByAddress,
-  isExist
+  isExist,
 };

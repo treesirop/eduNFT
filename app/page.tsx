@@ -1,13 +1,13 @@
-"use client"
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 export default function Home() {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     if (!initialized) {
       // Call the init API route to initialize the database
-      fetch('/api/init')
+      fetch("/api/init")
         .then((res) => res.json())
         .then((data) => {
           console.log(data.message);
