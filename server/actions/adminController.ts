@@ -24,7 +24,6 @@ async function getAllAdmins() {
   }
 }
 
-// 根据ID获取管理员
 async function getAdminById(id: number | SQLWrapper) {
   try {
     const result = await db.query.admins.findMany({

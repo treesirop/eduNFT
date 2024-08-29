@@ -6,12 +6,11 @@ export default function Home() {
 
   useEffect(() => {
     if (!initialized) {
-      // Call the init API route to initialize the database
       fetch("/api/init")
         .then((res) => res.json())
         .then((data) => {
           console.log(data.message);
-          setInitialized(true); // Mark as initialized
+          setInitialized(true);
         });
     }
   }, [initialized]);

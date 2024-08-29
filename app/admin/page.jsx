@@ -1,30 +1,21 @@
 "use client";
 import { useWriteContract } from "wagmi";
-import { parseEther } from "viem";
-import React, { useEffect, useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { abi, bytecode } from "../../lib/CourseCertificate.json";
+import React, { useEffect, useState } from "react";
+import { abi } from "../../lib/CourseCertificate.json";
 import { ConnectBtn } from "../components/connectButton";
-import { useWaitForTransactionReceipt, useWatchContractEvent } from "wagmi";
+import { useWatchContractEvent } from "wagmi";
 
 const AdminDashboard = () => {
   const { writeContract } = useWriteContract();
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminId, setAdminId] = useState(null);
   const [collections, setCollections] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState(null);
   const [inputValues, setInputValues] = useState({});
   const [courseAddress, setCourseAddress] = useState("");
   const [userAddress, setUserAddress] = useState("");
-  const [hashData, setHashData] = useState("");
 
-  // const result = useWaitForTransactionReceipt({
-  //   hash: hashData,
-  //   pollingInterval: 1000
-  // });
   const handleLogin = async () => {
     try {
       const response = await fetch("/api/admin/", {
@@ -59,14 +50,13 @@ const AdminDashboard = () => {
         setCollections(data);
       } else {
         console.error("Data is not an array:", data);
-        setCollections([]); // Set an empty array if data is not an array
+        setCollections([]);
       }
     } catch (error) {
       console.error("error handle apply in:", error);
     }
   };
 
-  // Check login status on component mount
   useEffect(() => {
     const storedAdminId = localStorage.getItem("adminId");
     const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
@@ -90,16 +80,14 @@ const AdminDashboard = () => {
     },
   });
 
-  // Fetch collections
   useEffect(() => {
     if (isLoggedIn) {
       fetchApply();
-      const intervalId = setInterval(fetchApply, 5000); // Poll every 5 seconds
-      return () => clearInterval(intervalId); // Cleanup on unmount
+      const intervalId = setInterval(fetchApply, 5000);
+      return () => clearInterval(intervalId);
     }
   }, [isLoggedIn]);
 
-  // Initialize inputValues state
   useEffect(() => {
     const initialInputValues = collections.reduce((acc, collection, index) => {
       acc[index] = collection.contractAddress || "";
@@ -264,8 +252,6 @@ const AdminDashboard = () => {
     <div className="max-w-4xl mx-auto p-6 space-y-12">
       <ConnectBtn />
       <h1 className="text-3xl font-semibold mb-6">Admin Dashboard</h1>
-
-      {/* Review Applications */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-4">
           Review Course Applications
@@ -320,7 +306,6 @@ const AdminDashboard = () => {
         </table>
       </div>
 
-      {/* Create Collection */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-4">issueCertificate</h2>
 

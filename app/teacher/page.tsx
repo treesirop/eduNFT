@@ -20,9 +20,8 @@ const TeacherDashboard = () => {
       const data = await response.json();
       console.log("Registration response:", data);
       if (data.id) {
-        localStorage.setItem("teacherId", data.id); // Store teacher ID in local storage
+        localStorage.setItem("teacherId", data.id);
       }
-      // Handle successful registration, e.g., redirect to another page
     } catch (error) {
       console.error("Error registering:", error);
     }
@@ -41,8 +40,8 @@ const TeacherDashboard = () => {
       console.log("Login response:", data);
       if (data[0].id) {
         let id = data[0].id;
-        localStorage.setItem("teacherId", data[0].id); // Store teacher ID in local storage
-        router.push(`/teacher/${data[0].id}`); // Redirect to the teacher's dashboard with the ID in the path
+        localStorage.setItem("teacherId", data[0].id);
+        router.push(`/teacher/${data[0].id}`);
       } else {
         console.error("Login failed: ID not returned");
       }

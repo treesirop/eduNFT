@@ -17,15 +17,13 @@ const TeacherDashboard = () => {
       contractAddress: string;
     }[]
   >([]);
-
-  // Fetch collections for the teacher with the given ID
   useEffect(() => {
     if (id) {
       fetchCollections(id);
-      const intervalId = setInterval(() => fetchCollections(id), 5000); // Poll every 5 seconds
-      return () => clearInterval(intervalId); // Cleanup on unmount
+      const intervalId = setInterval(() => fetchCollections(id), 5000);
+      return () => clearInterval(intervalId);
     } else {
-      router.push("/teacher"); // Redirect to login page if teacher ID is not found
+      router.push("/teacher");
     }
   }, [id, router]);
 
@@ -38,7 +36,7 @@ const TeacherDashboard = () => {
         setCollections(data);
       } else {
         console.error("Data is not an array:", data);
-        setCollections([]); // Set an empty array if data is not an array
+        setCollections([]);
       }
     } catch (error) {
       console.error("Error fetching collections:", error);
@@ -73,7 +71,6 @@ const TeacherDashboard = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-12">
-      {/* NFT Collection Creation Section */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-2xl font-semibold mb-4">Apply Course</h1>
         <input
@@ -91,7 +88,6 @@ const TeacherDashboard = () => {
         </button>
       </div>
 
-      {/* View Created NFT Collections Section */}
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr>

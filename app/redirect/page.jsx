@@ -7,7 +7,7 @@ export default function RedirectPage() {
   const router = useRouter();
 
   const loginSuccess = () => {
-    router.push("/users"); // Redirect after successful login
+    router.push("/users");
   };
 
   const loginError = (error) => {

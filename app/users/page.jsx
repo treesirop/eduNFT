@@ -18,11 +18,10 @@ export default function Home() {
 
   useEffect(() => {
     console.log(authState);
-    // Fetch courses data from the API
     fetchCourse();
-    const intervalId = setInterval(fetchCourse, 5000); // Poll every 5 seconds
-    return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [authState]); // Now it will log whenever authState changes
+    const intervalId = setInterval(fetchCourse, 5000);
+    return () => clearInterval(intervalId);
+  }, [authState]);
 
   useEffect(() => {
     if (address) {
@@ -43,7 +42,7 @@ export default function Home() {
         setCollections(data);
       } else {
         console.error("Data is not an array:", data);
-        setCollections([]); // Set an empty array if data is not an array
+        setCollections([]);
       }
     } catch (error) {
       console.error("error handle apply in:", error);
@@ -73,7 +72,7 @@ export default function Home() {
       }
     );
   };
-  // Add a loading state
+
   if (authState.isLoading) {
     return <div>Loading...</div>;
   }

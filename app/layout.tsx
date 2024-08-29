@@ -4,7 +4,10 @@ import { headers } from "next/headers";
 import { Inter } from "next/font/google";
 import Providers from "./providers";
 import OCConnectWrapper from "./components/OCConnectWrapper";
+import * as dotenv from "dotenv";
+dotenv.config();
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -13,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const opts = {
-    redirectUri: "http://localhost:3000/redirect", // Adjust this URL
+    redirectUri: `${baseUrl}/redirect`, // Adjust this URL
   };
   const cookie = headers().get("cookie");
   return (

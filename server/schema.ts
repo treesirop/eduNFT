@@ -3,8 +3,6 @@ import {
   serial,
   varchar,
   timestamp,
-  int,
-  text,
   bigint,
   boolean,
 } from "drizzle-orm/mysql-core";
