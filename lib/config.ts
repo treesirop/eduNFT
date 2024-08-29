@@ -29,7 +29,7 @@ const opencampus: Chain = {
   testnet: true,
 };
 
-const projectId = "bc94ee6ebbca89c09b454734c8b29313";
+const projectId = process.env.PROJECT_ID || "";
 
 const supportedChains: Chain[] = [
   sepolia,
