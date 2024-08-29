@@ -1,9 +1,11 @@
-"use client";
 import { http, createStorage, cookieStorage } from "wagmi";
 import { sepolia, bscTestnet, blastSepolia } from "wagmi/chains";
 import { Chain, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import * as dotenv from "dotenv";
-dotenv.config();
+console.log("Loading environment variables...");
+dotenv.config({ path: "certificate/.env" });
+console.log("Environment variables loaded:", process.env);
+console.log("PROJECT_ID:", process.env.PROJECT_ID);
 const opencampus: Chain = {
   id: 656476,
   name: "Open Campus Codex",
@@ -29,7 +31,7 @@ const opencampus: Chain = {
   testnet: true,
 };
 
-const projectId = process.env.PROJECT_ID || "";
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || "";
 
 const supportedChains: Chain[] = [
   sepolia,
